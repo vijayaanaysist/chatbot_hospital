@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from chatbot import get_response
+import os
 
 app = Flask(__name__)
 
@@ -16,12 +17,9 @@ def chat():
     return jsonify({"reply": response})
 
 # ---------------- DIALOGFLOW WEBHOOK ----------------
-@app.route("/webhook", methods=["POST", "GET"])
+@app.route("/webhook", methods=["POST"])
 def webhook():
-    if request.method == "GET":
-        return "Webhook is running ✅"
-
-    req = request.get_json(silent=True, force=True)
+    req = request.get_json(silent=True)
     print("REQUEST RECEIVED:", req)
 
     return jsonify({
@@ -30,4 +28,5 @@ def webhook():
 
 # ---------------- RUN APP ----------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
